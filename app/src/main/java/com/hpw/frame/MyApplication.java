@@ -42,7 +42,7 @@ public class MyApplication extends Application {
 
     }
 
-    public ApplicationComponent getmApplicationComponent() {
+    public ApplicationComponent getApplicationComponent() {
         return mApplicationComponent;
     }
 

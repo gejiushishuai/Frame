@@ -25,6 +25,12 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
+    public Context provideApplicationContext() {
+        return context.getApplicationContext();
+    }
+
+    @Provides
+    @Singleton
     OkHttpClient provideOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -33,4 +39,5 @@ public class ApplicationModule {
         builder.interceptors().clear();
         return builder.build();
     }
+
 }

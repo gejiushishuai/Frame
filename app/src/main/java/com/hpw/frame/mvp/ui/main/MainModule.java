@@ -9,4 +9,9 @@ import dagger.Module;
  */
 @Module
 public class MainModule {
+    private MainActivity mActivity;
+
+    public MainModule(MainActivity mActivity) {
+        this.mActivity = mActivity;
+    }
 }

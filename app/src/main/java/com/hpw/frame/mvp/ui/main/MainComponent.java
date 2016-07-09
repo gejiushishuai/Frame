@@ -1,5 +1,7 @@
 package com.hpw.frame.mvp.ui.main;
 
+import com.hpw.frame.components.injector.component.ApplicationComponent;
+import com.hpw.frame.components.injector.module.ActivityModule;
 import com.hpw.frame.components.injector.scopes.PerActivity;
 
 import dagger.Component;
@@ -10,6 +12,7 @@ import dagger.Component;
  * 邮箱：424346976@qq.com
  */
 @PerActivity
-@Component(modules = MainModule.class)
+@Component(dependencies = ApplicationComponent.class, modules = {ActivityModule.class, MainModule.class})
 public interface MainComponent {
+    void inject(MainActivity activity);
 }
