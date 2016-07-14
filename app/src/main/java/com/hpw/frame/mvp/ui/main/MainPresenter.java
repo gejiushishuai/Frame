@@ -37,13 +37,22 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void onNightModelClick(View view) {
-
         RxView.clicks(view)
                 .throttleFirst(1000, TimeUnit.MILLISECONDS)
                 .compose(((MainActivity) mMainView).<Void>bindToLifecycle())
                 .subscribe(aVoid -> {
                     SettingPrefUtil.setNightModel(mContext, !SettingPrefUtil.getNightModel(mContext));
                     mMainView.reload();
+                });
+    }
+
+    @Override
+    public void onGirlClick(View view) {
+        RxView.clicks(view)
+                .throttleFirst(1000, TimeUnit.MILLISECONDS)
+                .compose(((MainActivity) mMainView).<Void>bindToLifecycle())
+                .subscribe(aVoid -> {
+                    mMainView.showGirlUi();
                 });
     }
 }

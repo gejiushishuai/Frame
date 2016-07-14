@@ -15,9 +15,17 @@
         android:text="Frame" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btNight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="夜间模式切换" />
+
+    <Button
+        android:id="@+id/btGirl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GIRL"
+        android:layout_below="@+id/btNight"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

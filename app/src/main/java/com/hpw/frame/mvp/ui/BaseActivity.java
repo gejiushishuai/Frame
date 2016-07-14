@@ -1,7 +1,6 @@
 package com.hpw.frame.mvp.ui;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -10,7 +9,6 @@ import android.view.WindowManager;
 
 import com.hpw.frame.AppManager;
 import com.hpw.frame.MyApplication;
-import com.hpw.frame.R;
 import com.hpw.frame.components.injector.component.ApplicationComponent;
 import com.hpw.frame.components.injector.module.ActivityModule;
 import com.hpw.frame.utils.ResourceUtil;
@@ -61,15 +59,15 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     private void initTheme() {
         int theme;
-        try {
-            theme = getPackageManager().getActivityInfo(getComponentName(), 0).theme;
-        } catch (PackageManager.NameNotFoundException e) {
-            return;
-        }
-        if (theme != R.style.AppThemeLaunch) {
+//        try {
+//            theme = getPackageManager().getActivityInfo(getComponentName(), 0).theme;
+//        } catch (PackageManager.NameNotFoundException e) {
+//            return;
+//        }
+//        if (theme != R.style.AppThemeLaunch) {
             theme = ThemeUtil.themeArr[SettingPrefUtil.getThemeIndex(this)][
                     SettingPrefUtil.getNightModel(this) ? 1 : 0];
-        }
+//        }
         setTheme(theme);
     }
 

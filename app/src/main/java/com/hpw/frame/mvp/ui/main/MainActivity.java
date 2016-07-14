@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import com.hpw.frame.R;
 import com.hpw.frame.mvp.ui.BaseActivity;
+import com.hpw.frame.mvp.ui.girl.GirlActivity;
 
 import javax.inject.Inject;
 
@@ -14,10 +15,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
 
-    @BindView(R.id.button)
-    Button button;
     @Inject
     MainPresenter mPresenter;
+    @BindView(R.id.btNight)
+    Button btNight;
+    @BindView(R.id.btGirl)
+    Button btGirl;
 
     @Override
     public int initContentView() {
@@ -38,7 +41,8 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     public void initUiAndListener() {
         ButterKnife.bind(this);
         mPresenter.attachView(this);
-        mPresenter.onNightModelClick(button);
+        mPresenter.onNightModelClick(btNight);
+        mPresenter.onGirlClick(btGirl);
     }
 
     @Override
@@ -60,5 +64,10 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     public static void startActivity(Context mContext) {
         Intent intent = new Intent(mContext, MainActivity.class);
         mContext.startActivity(intent);
+    }
+
+    @Override
+    public void showGirlUi() {
+        GirlActivity.startActivity(this);
     }
 }

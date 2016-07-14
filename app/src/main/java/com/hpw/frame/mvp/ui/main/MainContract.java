@@ -10,10 +10,12 @@ import com.hpw.frame.mvp.ui.BaseView;
  */
 public interface MainContract {
     interface View extends BaseView {
+        void showGirlUi();
         void reload();
     }
 
     interface Presenter extends BasePresenter<View> {
         void onNightModelClick(android.view.View view);
+        void onGirlClick(android.view.View view);
     }
 }
