@@ -1,12 +1,17 @@
 package com.hpw.frame.mvp.ui.girl;
 
-import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 
+import com.hpw.frame.mvp.bean.Image;
 import com.hpw.frame.mvp.ui.BasePresenter;
 import com.hpw.frame.mvp.ui.BaseView;
+
+import java.util.List;
+
+import rx.Observable;
 
 /**
  * 作者：杭鹏伟
@@ -16,6 +21,8 @@ import com.hpw.frame.mvp.ui.BaseView;
 public interface GirlContract {
     interface View extends BaseView {
         void flyToTop();
+
+        void showUi(boolean clean, Observable<List<Image>> results);
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -23,6 +30,8 @@ public interface GirlContract {
 
         void onRefresh(SwipeRefreshLayout girlRefreshLayout);
 
-        void init(Context context, GirlAdapter girlAdapter, RecyclerView recyclerView, SwipeRefreshLayout swipeRefreshLayout);
+        void onRecyclerViewScroll(StaggeredGridLayoutManager layoutManager, RecyclerView girlRecyclerView, SwipeRefreshLayout girlRefreshLayout);
+
+        void onImageClick(GirlAdapter girlAdapter);
     }
 }

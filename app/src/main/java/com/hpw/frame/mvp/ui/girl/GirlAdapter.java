@@ -28,7 +28,7 @@ import rx.functions.Action1;
  * 日期：16-7-14 12:10
  * 邮箱：424346976@qq.com
  */
-public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder> implements Action1<List<Image>>{
+public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder> implements Action1<List<Image>> {
 
     @Inject
     GirlAdapter() {
@@ -60,6 +60,7 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
     public void onBindViewHolder(GirlViewHolder holder, int position) {
         Image image = mImages.get(position);
 
+        holder.image = image;
         Glide.with(mContext)
                 .load(image.url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -85,6 +86,7 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
     public class GirlViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image)
         RatioImageView imageView;
+        Image image;
 
         public GirlViewHolder(View itemView) {
             super(itemView);
@@ -95,7 +97,7 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
                         @Override
                         public void call(Void aVoid) {
                             if (onTouchListener != null) {
-                                onTouchListener.onImageClick(imageView);
+                                onTouchListener.onImageClick(imageView, image);
                             }
                         }
                     });
@@ -103,7 +105,7 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
     }
 
     public interface OnTouchListener {
-        void onImageClick(View v);
+        void onImageClick(View v, Image image);
     }
 
     public void setOnTouchListener(OnTouchListener onTouchListener) {

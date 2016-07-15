@@ -1,9 +1,11 @@
 package com.hpw.frame.mvp.ui.girl;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -15,10 +17,12 @@ import com.hpw.frame.mvp.bean.Image;
 import com.hpw.frame.mvp.bean.PrettyGirl;
 import com.hpw.frame.mvp.bean.Results;
 import com.hpw.frame.utils.ConfigurationUtils;
+import com.hpw.frame.widget.PictureActivity;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.jakewharton.rxbinding.view.RxView;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.trello.rxlifecycle.ActivityEvent;
 
@@ -31,7 +35,6 @@ import javax.inject.Inject;
 import retrofit2.adapter.rxjava.Result;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -43,21 +46,17 @@ import rx.schedulers.Schedulers;
 public class GirlPresenter implements GirlContract.Presenter {
 
     private GirlContract.View mGirlView;
-    private Context mContext;
+    private List<Image> mImages = new ArrayList<>();
     private int mPage = 1;
     private boolean refreshing;
-    private List<Image> mImages = new ArrayList<>();
-
-    private GirlAdapter girlAdapter;
-    private RecyclerView girlRecyclerView;
-    private SwipeRefreshLayout girlRefreshLayout;
 
     @Inject
     GirlApi mGirlApi;
+    private Context mContext;
 
     @Inject
-    public GirlPresenter() {
-
+    public GirlPresenter(Context mContext) {
+        this.mContext = mContext;
     }
 
     @Override
@@ -88,13 +87,7 @@ public class GirlPresenter implements GirlContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .share();
 
-        results.filter(Results.isNull())
-                .doOnNext(images -> {
-                    initRecyclerView();
-                    if (clean) images.clear();
-                })
-                .doOnCompleted(() -> girlRefreshLayout.setRefreshing(false))
-                .subscribe(girlAdapter, dataError);
+        mGirlView.showUi(clean, results);
     }
 
     private final Func1<GirlData, Observable<List<Image>>> imageFetcher = girlData -> {
@@ -116,16 +109,6 @@ public class GirlPresenter implements GirlContract.Presenter {
         return Observable.just(mImages);
     };
 
-    private Action1<Throwable> dataError = new Action1<Throwable>() {
-        @Override
-        public void call(Throwable throwable) {
-            throwable.printStackTrace();
-            girlRefreshLayout.setRefreshing(false);
-            Snackbar.make(girlRecyclerView, throwable.getMessage(), Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
     @Override
     public void onRefresh(SwipeRefreshLayout girlRefreshLayout) {
         RxSwipeRefreshLayout.refreshes(girlRefreshLayout)
@@ -138,21 +121,7 @@ public class GirlPresenter implements GirlContract.Presenter {
     }
 
     @Override
-    public void init(Context context, GirlAdapter mGirlAdapter, RecyclerView mGirlRecyclerView, SwipeRefreshLayout mGirlRefreshLayout) {
-
-        this.mContext = context;
-        this.girlAdapter = mGirlAdapter;
-        this.girlRecyclerView = mGirlRecyclerView;
-        this.girlRefreshLayout = mGirlRefreshLayout;
-        getGirlData(false);
-        girlRecyclerView.setAdapter(girlAdapter);
-        int spanCount = 2;
-        if (ConfigurationUtils.isOrientationPortrait(mContext)) spanCount = 2;
-        else if (ConfigurationUtils.isOrientationLandscape(mContext)) spanCount = 3;
-
-        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(
-                spanCount, StaggeredGridLayoutManager.VERTICAL);
-        girlRecyclerView.setLayoutManager(layoutManager);
+    public void onRecyclerViewScroll(StaggeredGridLayoutManager layoutManager, RecyclerView girlRecyclerView, SwipeRefreshLayout girlRefreshLayout) {
         RxRecyclerView.scrollEvents(girlRecyclerView)
                 .compose(((GirlActivity) mGirlView).<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
                 .filter(recyclerViewScrollEvent -> {
@@ -179,8 +148,23 @@ public class GirlPresenter implements GirlContract.Presenter {
                 });
     }
 
-    public void initRecyclerView() {
-        girlAdapter.bind(mContext, mImages);
-    }
+    @Override
+    public void onImageClick(GirlAdapter girlAdapter) {
+        girlAdapter.setOnTouchListener((v, image) ->
+                Picasso.with(mContext).load(image.url).fetch(new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent((GirlActivity) mGirlView, PictureActivity.class);
+                        intent.putExtra("url", image.url);
+                        ActivityOptionsCompat compat =
+                                ActivityOptionsCompat.makeSceneTransitionAnimation((GirlActivity) mGirlView,
+                                        v, "girl");
+                        ActivityCompat.startActivity((GirlActivity) mGirlView, intent, compat.toBundle());
+                    }
 
+                    @Override
+                    public void onError() {
+                    }
+                }));
+    }
 }

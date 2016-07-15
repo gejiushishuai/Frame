@@ -29,7 +29,9 @@
             android:theme="@style/AppThemeLight.NoTranslucent" />
         <activity
             android:name=".mvp.ui.girl.GirlActivity"
-            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeLight.NoTranslucent" />
+        <activity
+            android:name=".widget.PictureActivity"
             android:theme="@style/AppThemeLight.NoTranslucent" />
     </application>
 
